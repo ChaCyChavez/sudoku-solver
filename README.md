@@ -13,7 +13,7 @@ CMSC142 Project
 2. Create _/bin_ directory inside the folder.
 	```
 	$ cd sudoku-solver
-  $ mkdir bin
+  	$ mkdir bin
 	```
 
 ### Compile and run
@@ -21,5 +21,5 @@ CMSC142 Project
 1. In the current directory, run
 	```
 	$ make
-  $ make run
+  	$ make run
 	```
