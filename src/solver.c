@@ -2,16 +2,19 @@
 #include <stdlib.h>
 
 
-void printPuzzle(int ** puzzle, int puzzle_size){
+void printPuzzle(FILE *file_out, int ** puzzle, int puzzle_size){
   // Print puzzle
   int i, j;
   for(i = 0; i < puzzle_size; i++) {
     for(j = 0; j < puzzle_size; j++) {
       printf("%d\t", puzzle[i][j]);
+      fprintf(file_out, "%d\t", puzzle[i][j]);
     }
     printf("\n");
+    fprintf(file_out, "\n");
   }
   printf("\n");
+  fprintf(file_out, "\n");
 }
 
 int solved(int ** puzzle, int puzzle_size) {
@@ -100,14 +103,15 @@ int hasConflict(int ** puzzle, int subgrid_size, int puzzle_size, int currRow, i
   return 0;
 }
 
-int solvePuzzle(int ** puzzle, int subgrid_size, int puzzle_size, int *row, int *col, int *num_of_sols){
+int solvePuzzle(FILE *file_out, int ** puzzle, int subgrid_size, int puzzle_size, int *row, int *col, int *num_of_sols){
   int i, j, x;
   int currRow = *row;
   int currCol = *col;
   if(solved(puzzle, puzzle_size) == 1){
   	(*num_of_sols)++;
-  	printf("Solution #%d:\n", (*num_of_sols));
-  	printPuzzle(puzzle, puzzle_size);
+    printf("Solution #%d:\n", (*num_of_sols));
+    fprintf(file_out, "Solution #%d:\n", (*num_of_sols));
+  	printPuzzle(file_out, puzzle, puzzle_size);
     return 1;
   }
 
@@ -118,7 +122,7 @@ int solvePuzzle(int ** puzzle, int subgrid_size, int puzzle_size, int *row, int 
       // if(solvePuzzle(puzzle, subgrid_size, puzzle_size, row, col) == 1){
       //   return 1;
       // }
-      solvePuzzle(puzzle, subgrid_size, puzzle_size, row, col, num_of_sols);
+      solvePuzzle(file_out, puzzle, subgrid_size, puzzle_size, row, col, num_of_sols);
     }
   }
   puzzle[currRow][currCol] = 0; 
@@ -134,6 +138,7 @@ int main(void) {
   int num_of_sols=0;
 
   FILE *file = fopen("./input/in.txt", "r");
+  FILE *file_out = fopen("./output/out.txt", "w");
 
   fscanf(file, "%d", &num_of_puzzles);
 
@@ -155,10 +160,12 @@ int main(void) {
       }
     }
 
-    printPuzzle(puzzle, puzzle_size);
+    fprintf(file_out, "Input:\n");
+    printPuzzle(file_out, puzzle, puzzle_size);
     findNext(puzzle, puzzle_size, &row, &col);
-    solvePuzzle(puzzle, subgrid_size, puzzle_size, &row, &col, &num_of_sols);
+    solvePuzzle(file_out ,puzzle, subgrid_size, puzzle_size, &row, &col, &num_of_sols);
     printf("Number of solutions: %d\n\n", num_of_sols);
+    fprintf(file_out, "Number of solutions: %d\n\n", num_of_sols);
     // printPuzzle(puzzle, puzzle_size);
     // Free puzzle
     for(i = 0; i < subgrid_size; i++) {
@@ -166,9 +173,11 @@ int main(void) {
     }
 
     free(puzzle);
+    num_of_sols = 0;
   }
 
   fclose(file);
+  fclose(file_out);
 
   return 0;
 }
