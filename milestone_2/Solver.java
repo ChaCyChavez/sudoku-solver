@@ -28,17 +28,17 @@ public class Solver {
   public void findNext(int board[][], int boardSize, int row, int col) {
     int i, j;
     for(i = 0; i < boardSize; i++) {
-      for(j = 0; j < boardSize; j++) {    
+      for(j = 0; j < boardSize; j++) {
         if(board[i][j] == 0) {
           this.row = i;
           this.col = j;
           return;
         }
       }
-    }  
+    }
   }
 
-  private void printBoard(int board[][], int boardSize) {
+  public void printBoard(int board[][], int boardSize) {
     for(int i = 0; i < boardSize; i++) {
       for(int j = 0; j < boardSize; j++) {
         System.out.print(board[i][j] + " ");
@@ -47,7 +47,13 @@ public class Solver {
     }
   }
 
-  private boolean hasConflict(int board[][], int subGridSize, int boardSize, int currRow, int currCol) {
+  private boolean hasConflict(int board[][], int subGridSize, int boardSize, int currRow, int currCol, int mode) {
+    /**MODES:
+    0: Sudoku
+    1: Sudoku X
+    2: Sudoku Y
+    3: Sudoku XY
+    **/
     int i, j, rowMin, rowMax, colMin, colMax;
 
     //check row
@@ -93,17 +99,70 @@ public class Solver {
         if(colMax % subGridSize == 0) break;
       }
       colMin = colMax - subGridSize;
-    }  
+    }
 
 
     for(i = rowMin; i < rowMax; i++) {
       for(j = colMin; j < colMax; j++) {
-        if((currRow != i && currCol != j) && 
+        if((currRow != i && currCol != j) &&
           board[i][j] == board[currRow][currCol]) {
           return true;
         }
       }
-    }  
+    }
+
+    // //check sudoku X
+    if(mode == 1 || mode == 3){
+      if(currRow == currCol) {
+        //left diagonal
+        for(i = 0; i < boardSize; i++) {
+          // System.out.println(currRow+" "+currCol);
+          if((currRow != i && currCol != i) &&
+            board[i][i] == board[currRow][currCol]) {
+            return true;
+          }
+        }
+      }
+      if((currRow + currCol) == (boardSize-1)){
+        //right diagonal
+        for(i = 0; i < boardSize; i++) {
+          if((currRow != i && currCol != Math.abs(boardSize-1-i)) &&
+            board[i][Math.abs(boardSize-1-i)] == board[currRow][currCol]) {
+            return true;
+          }
+        }
+      }
+    }
+
+    // //check sudoku Y
+    if(mode == 2 || mode == 3){
+      if(currRow <= (boardSize/2) || (currCol == (boardSize/2) && currRow > (boardSize/2))){
+        if(currRow == currCol || (currCol == (boardSize/2) && currRow > (boardSize/2))) {
+          //left diagonal or bottom center
+          for(i = 0; i < ((boardSize/2)+1); i++) {
+            if((currRow != i && currCol != i) &&
+              board[i][i] == board[currRow][currCol]) {
+              return true;
+            }
+          }
+        }
+        if(currRow + currCol == (boardSize-1) || (currCol == (boardSize/2) && currRow > (boardSize/2))){
+          //right diagonal or bottom center
+          for(i = 0; i < ((boardSize/2)+1); i++) {
+            if((currRow != i && currCol != (boardSize-i-1)) &&
+              board[i][boardSize-i-1] == board[currRow][currCol]) {
+              return true;
+            }
+          }
+        }
+        for(i = (boardSize/2); i<boardSize; i++){
+          if((currRow != i) &&
+            board[i][boardSize/2] == board[currRow][currCol]) {
+            return true;
+          }
+        }
+      }
+    }
     return false;
   }
 
@@ -122,7 +181,7 @@ public class Solver {
 
     for(i = 1; i < boardSize + 1; i++) {
       board[currRow][currCol] = i;
-      if(!hasConflict(board, subGridSize, boardSize, currRow, currCol)) {
+      if(!hasConflict(board, subGridSize, boardSize, currRow, currCol, 1)) {
         findNext(board, boardSize, this.row, this.col);
         // if(solve_board(output_file, board, subGridSize, boardSize, row, col) == 1) {
         //   return 1;
@@ -130,7 +189,7 @@ public class Solver {
         solve(board, subGridSize, boardSize, this.row, this.col);
       }
     }
-    board[currRow][currCol] = 0; 
+    board[currRow][currCol] = 0;
     return false;
   }
 

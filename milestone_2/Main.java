@@ -8,7 +8,7 @@ public class Main {
 
   public static void main(String[] args) {
 
-    String fileName = "in.txt";
+    String fileName = "in2.txt";
 
     try {
       FileReader fr = new FileReader(fileName);
@@ -36,6 +36,7 @@ public class Main {
         }
 
         Board currBoard = new Board(board, subGridSize);
+        solver.printBoard(currBoard.getBoard(), currBoard.getBoardSize());
         solver.findNext(currBoard.getBoard(), currBoard.getBoardSize(), solver.getRow(), solver.getCol());
         solver.solve(currBoard.getBoard(), currBoard.getSubGridSize(), currBoard.getBoardSize(), solver.getRow(), solver.getCol());
 
