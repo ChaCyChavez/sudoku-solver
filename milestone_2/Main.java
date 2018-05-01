@@ -16,14 +16,11 @@ public class Main {
 
 
       int numOfPuzzle = Integer.parseInt(br.readLine());
-      System.out.println(numOfPuzzle);
 
       Solver solver = new Solver();
 
       while(numOfPuzzle > 0) {
         int subGridSize = Integer.parseInt(br.readLine());
-
-        System.out.println(subGridSize);
         int boardSize = subGridSize * subGridSize;
 
         int board[][] = new int[boardSize][boardSize];
@@ -36,8 +33,8 @@ public class Main {
         }
 
         Board currBoard = new Board(board, subGridSize);
-        solver.findNext(currBoard.getBoard(), currBoard.getBoardSize(), solver.getRow(), solver.getCol());
-        solver.solve(currBoard.getBoard(), currBoard.getSubGridSize(), currBoard.getBoardSize(), solver.getRow(), solver.getCol());
+        currBoard.findNext(currBoard.getBoard(), boardSize);
+        solver.solve(currBoard, currBoard.getSubGridSize(), currBoard.getBoardSize());
 
         numOfPuzzle--;
       }
