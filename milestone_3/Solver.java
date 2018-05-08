@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.util.Vector;
+import java.util.ArrayList;
 
 public class Solver {
 
@@ -135,6 +136,22 @@ public class Solver {
           for(i = 0; i < ((boardSize/2)+1); i++) {
             if((currRow != i && currCol != i) &&
               board[i][i] == board[currRow][currCol]) {
+                System.out.println("CONFLICT ON0: " );
+                System.out.println(i + " " + i);
+                System.out.println(currRow + " " + currCol);
+              this.printBoard(board, boardSize);
+              System.out.println("");
+              return true;
+            }
+          }
+          for(i = (boardSize/2); i<boardSize; i++){
+            if((currRow != i) &&
+              board[i][boardSize/2] == board[currRow][currCol]) {
+                System.out.println("CONFLICT ON2: " );
+                System.out.println(i + " " + (boardSize/2));
+                System.out.println(currRow + " " + currCol);
+                this.printBoard(board, boardSize);
+                System.out.println("");
               return true;
             }
           }
@@ -144,14 +161,24 @@ public class Solver {
           for(i = 0; i < ((boardSize/2)+1); i++) {
             if((currRow != i && currCol != (boardSize-i-1)) &&
               board[i][boardSize-i-1] == board[currRow][currCol]) {
+                System.out.println("CONFLICT ON1: " );
+                System.out.println(i + " " + (boardSize-i-1));
+                System.out.println(currRow + " " + currCol);
+                this.printBoard(board, boardSize);
+                System.out.println("");
               return true;
             }
           }
-        }
-        for(i = (boardSize/2); i<boardSize; i++){
-          if((currRow != i) &&
-            board[i][boardSize/2] == board[currRow][currCol]) {
-            return true;
+          for(i = (boardSize/2); i<boardSize; i++){
+            if((currRow != i) &&
+              board[i][boardSize/2] == board[currRow][currCol]) {
+                System.out.println("CONFLICT ON2: " );
+                System.out.println(i + " " + (boardSize/2));
+                System.out.println(currRow + " " + currCol);
+                this.printBoard(board, boardSize);
+                System.out.println("");
+              return true;
+            }
           }
         }
       }
@@ -159,21 +186,22 @@ public class Solver {
     return false;
   }
 
-  public void solve(Board board, int subGridSize, int boardSize) {
-
+  ArrayList<int[][]> solve(Board board, int subGridSize, int boardSize, int mode) {
+    ArrayList<int[][]> sols = new ArrayList<int[][]>();
     this.boards.add(board);
+    int counter = 0;
 
     while(this.boards.size() != 0) {
       currBoard = boards.pop();
 
       if(isSolved(currBoard.getBoard(), boardSize)) {
-        System.out.println("solved");
-        printBoard(currBoard.getBoard(), boardSize);
+        counter += 1;
+        sols.add(currBoard.getBoard());
       } else {
         for(int i = 1; i < boardSize + 1; i++) {
 
           newBoard = currBoard.createNewState(i);
-          if(!hasConflict(newBoard.getBoard(), subGridSize, boardSize, newBoard.getMove().get(0), newBoard.getMove().get(1), 1)) {
+          if(!hasConflict(newBoard.getBoard(), subGridSize, boardSize, newBoard.getMove().get(0), newBoard.getMove().get(1), mode)) {
 
             newBoard.findNext(newBoard.getBoard(), boardSize);
             boards.push(newBoard);
@@ -181,6 +209,53 @@ public class Solver {
         }
       }
     }
+
+    System.out.println("\nNumber of Solutions: " + counter);
+    return sols;
+  }
+
+  public boolean isValid(Board board, int subGridSize, int boardSize, int mode){
+    int b[][] = board.getBoard();
+    if(mode == 1 || mode ==3){
+      for(int i=0; i<boardSize; i++){
+        for(int j=i+1; j<boardSize; j++){
+          if(b[i][i] != 0 && b[i][Math.abs(boardSize-1-i)] !=0){
+            if((b[i][i] == b[j][j]) ||
+            (b[i][Math.abs(boardSize-1-i)] == b[j][Math.abs(boardSize-1-j)])){
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    if(mode == 2 || mode == 3){
+      for(int j=0; j < ((boardSize/2)+1); j++){
+        for(int i = j+1; i < ((boardSize/2)+1); i++) {
+          if(b[j][j] != 0 && b[j][(boardSize-j-1)] !=0){
+            if(b[i][i] == b[j][j]) return false;
+            if(b[i][boardSize-i-1] == b[j][(boardSize-j-1)]) return false;
+          }
+        }
+        for(int i = (boardSize/2)+1; i<boardSize; i++){
+          if(b[j][j] != 0 && b[j][(boardSize-j-1)] !=0){
+            if(b[i][boardSize/2] == b[j][j]) return false;
+            if(b[i][boardSize/2] == b[j][(boardSize-j-1)]) return false;
+          }
+        }
+      }
+
+      for(int j = (boardSize/2); j<boardSize; j++){
+        for(int i = 0; i < (boardSize/2); i++) {
+          if(b[i][i] == b[j][boardSize/2]) return false;
+          if(b[i][(boardSize-i-1)] == b[j][boardSize/2]) return false;
+        }
+        for(int i = j+1; i<boardSize; i++){
+          if(b[i][boardSize/2] == b[j][boardSize/2]) return false;
+        }
+      }
+    }
+    return true;
   }
 
 

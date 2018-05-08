@@ -8,7 +8,7 @@ public class Main {
 
   public static void main(String[] args) {
 
-    String fileName = "in2.txt";
+    String fileName = "in.txt";
 
     try {
       FileReader fr = new FileReader(fileName);
