@@ -9,7 +9,6 @@ class Frame extends JFrame{
 
 	public Frame(ArrayList<Board> boards){						//Constructor for frame class.
 		super("Sudoku");
-		// this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(600,600));
 		this.setVisible(true);
 		this.setResizable(false);
@@ -17,7 +16,6 @@ class Frame extends JFrame{
 		Container container = this.getContentPane();
 		for (int i = 0; i < boards.size(); i++) {
 			String text = "Board " + (i + 1);
-			System.out.println(text);
 			this.tabs.add(text, this.getPanel(boards.get(i)));
 		}
 

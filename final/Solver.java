@@ -210,7 +210,7 @@ public class Solver {
       }
     }
 
-    System.out.println("\nNumber of Solutions: " + counter);
+    System.out.println("Number of Solutions: " + counter);
     return sols;
   }
 
